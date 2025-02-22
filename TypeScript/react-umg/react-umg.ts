@@ -6,6 +6,7 @@
 */
 
 import * as Reconciler from 'react-reconciler'
+import { DefaultEventPriority } from 'react-reconciler/constants'
 import * as puerts from 'puerts'
 import * as UE from 'ue'
 
@@ -191,58 +192,52 @@ class UEWidgetRoot {
     }
 }
 
-const hostConfig : Reconciler.HostConfig<string, any, UEWidgetRoot, UEWidget, UEWidget, any, any, {}, any, any, any, any> = {
-    getRootHostContext () {
-        return {};
+const reconciler = Reconciler<
+    string,         // Type
+    unknown,        // Props
+    UEWidgetRoot,   // Container
+    UEWidget,       // Instance
+    UEWidget,       // TextInstance
+    unknown,        // SuspenseInstance
+    unknown,        // HydratableInstance
+    unknown,        // PublicInstance
+    {},        // HostContext
+    unknown,        // UpdatePayload
+    unknown,        // ChildSet
+    unknown,        // TimeoutHandle
+    unknown         // NoTimeout
+> ({
+    supportsMutation: true,
+    supportsPersistence: false,
+    createInstance: function (type: string, props: unknown, rootContainer: UEWidgetRoot, hostContext: {}, internalHandle: Reconciler.OpaqueHandle): UEWidget {
+        return new UEWidget(type, props);
     },
-    //CanvasPanel()的parentHostContext是getRootHostContext返回的值
-    getChildHostContext (parentHostContext: {}) {
-        return parentHostContext;//no use, share one
+    createTextInstance: function (text: string, rootContainer: UEWidgetRoot, hostContext: {}, internalHandle: Reconciler.OpaqueHandle): UEWidget {
+        return new UEWidget("TextBlock", {Text: text});
     },
-    appendInitialChild (parent: UEWidget, child: UEWidget) {
+    appendInitialChild: function (parentInstance: UEWidget, child: UEWidget): void {
+        parentInstance.appendChild(child);
+    },
+    appendChild (parent: UEWidget, child: UEWidget) {
         parent.appendChild(child);
     },
     appendChildToContainer (container: UEWidgetRoot, child: UEWidget) {
         container.appendChild(child);
     },
-    appendChild (parent: UEWidget, child: UEWidget) {
-        parent.appendChild(child);
+    clearContainer: function(container: UEWidgetRoot) {
+        container.removeFromViewport();
     },
-    createInstance (type: string, props: any) {
-        return new UEWidget(type, props);
+    removeChildFromContainer: function (container: UEWidgetRoot, child: UEWidget) {
+        container.removeChild(child);
+        console.log('removeChildFromContainer');
     },
-    createTextInstance (text: string) {
-        return new UEWidget("TextBlock", {Text: text});
+    removeChild: function(parent: UEWidget, child: UEWidget) {
+        parent.removeChild(child);
     },
-    finalizeInitialChildren () {
+    finalizeInitialChildren: function (instance: UEWidget, type: string, props: unknown, rootContainer: UEWidgetRoot, hostContext: {}): boolean {
         return false
     },
-    getPublicInstance (instance: UEWidget) {
-        console.warn('getPublicInstance');
-        return instance
-    },
-    now: Date.now,
-    prepareForCommit () {
-        //log('prepareForCommit');
-    },
-    resetAfterCommit (container: UEWidgetRoot) {
-        container.addToViewport(0);
-    },
-    resetTextContent () {
-        console.error('resetTextContent not implemented!');
-    },
-    shouldSetTextContent (type, props) {
-        return false
-    },
-  
-    commitTextUpdate (textInstance: UEWidget, oldText: string, newText: string) {
-        if (oldText != newText) {
-            textInstance.update({}, {Text: newText})
-        }
-    },
-  
-    //return false表示不更新，真值将会出现到commitUpdate的updatePayload里头
-    prepareUpdate (instance: UEWidget, type: string, oldProps: any, newProps: any) {
+    prepareUpdate: function (instance: UEWidget, type: string, oldProps: unknown, newProps: unknown, rootContainer: UEWidgetRoot, hostContext: {}): unknown {
         try{
             return !deepEquals(oldProps, newProps);
         } catch(e) {
@@ -250,38 +245,108 @@ const hostConfig : Reconciler.HostConfig<string, any, UEWidgetRoot, UEWidget, UE
             return true;
         }
     },
-    commitUpdate (instance: UEWidget, updatePayload: any, type : string, oldProps : any, newProps: any) {
+    shouldSetTextContent: function (type: string, props: unknown): boolean {
+        return false
+    },
+    getRootHostContext: function (rootContainer: UEWidgetRoot): {} {
+        return {};
+    },
+    getChildHostContext: function (parentHostContext: {}, type: string, rootContainer: UEWidgetRoot): {} {
+        return parentHostContext;//no use, share one
+    },
+    getPublicInstance: function (instance: UEWidget): unknown {
+        console.warn('getPublicInstance');
+        return instance
+    },
+    prepareForCommit: function (containerInfo: UEWidgetRoot): Record<string, any> | null {
+        //log('prepareForCommit');
+        return null;
+    },
+    resetAfterCommit: function (containerInfo: UEWidgetRoot): void {
+        containerInfo.addToViewport(0);
+    },
+    resetTextContent: function (): void {
+        console.error('resetTextContent not implemented!');
+    },
+    preparePortalMount: function (containerInfo: UEWidgetRoot): void {
+        console.error('preparePortalMount not implemented!');
+
+        return;
+        throw new Error('Function not implemented.');
+    },
+    scheduleTimeout: function (fn: (...args: unknown[]) => unknown, delay?: number): unknown {
+        console.error('scheduleTimeout not implemented!');
+
+        return{
+            fn(...args: unknown[]) {
+                return;
+            }
+        };
+        throw new Error('Function not implemented.');
+    },
+    cancelTimeout: function (id: unknown): void {
+        console.error('cancelTimeout not implemented!');
+
+        return;
+        throw new Error('Function not implemented.');
+    },
+    noTimeout: -1,
+    isPrimaryRenderer: true,
+    getCurrentEventPriority: function (): Reconciler.Lane {
+        console.error('getCurrentEventPriority not implemented!');
+
+
+        return DefaultEventPriority;
+        throw new Error('Function not implemented.');
+    },
+    getInstanceFromNode: function (node: any): Reconciler.Fiber | null | undefined {
+        console.error('getInstanceFromNode not implemented!');
+
+        return null;
+        throw new Error('Function not implemented.');
+    },
+    beforeActiveInstanceBlur: function (): void {
+        console.error('beforeActiveInstanceBlur not implemented!');
+
+        return;
+        throw new Error('Function not implemented.');
+    },
+    afterActiveInstanceBlur: function (): void {
+        console.error('afterActiveInstanceBlur not implemented!');
+
+        return;
+        throw new Error('Function not implemented.');
+    },
+    prepareScopeUpdate: function (scopeInstance: any, instance: any): void {
+        console.error('prepareScopeUpdate not implemented!');
+
+        return;
+        throw new Error('Function not implemented.');
+    }, 
+    getInstanceFromScope: function (scopeInstance: any): UEWidget {
+        console.error('getInstanceFromScope not implemented!');
+
+        throw new Error('Function not implemented.');
+    },
+    detachDeletedInstance: function (node: UEWidget): void {
+        // console.error('detachDeletedInstance not implemented!');
+        return;
+        throw new Error('Function not implemented.');
+    },
+    commitTextUpdate: function(textInstance: UEWidget, oldText: string, newText: string): void {
+        if (oldText != newText) {
+            textInstance.update({}, {Text: newText})
+        }
+    },
+    commitUpdate: function (instance: UEWidget, updatePayload: any, type : string, oldProps : any, newProps: any) {
         try{
             instance.update(oldProps, newProps);
         } catch(e) {
             console.error("commitUpdate fail!, " + e);
         }
     },
-    removeChildFromContainer (container: UEWidgetRoot, child: UEWidget) {
-        console.error('removeChildFromContainer');
-        //container.removeChild(child).catch(e => {
-        //    console.error('removeChildFromContainer , e:' + e.message);
-        //});
-    },
-    removeChild(parent: UEWidget, child: UEWidget) {
-        parent.removeChild(child);
-    },
-
-    //useSyncScheduling: true,
-    supportsMutation: true,
-    isPrimaryRenderer: true,
-    supportsPersistence: false,
     supportsHydration: false,
-
-    shouldDeprioritizeSubtree: undefined,
-    setTimeout: undefined,
-    clearTimeout: undefined,
-    cancelDeferredCallback: undefined,
-    noTimeout: undefined,
-    scheduleDeferredCallback: undefined,
-}
-
-const reconciler = Reconciler(hostConfig)
+});
 
 export const ReactUMG = {
     render: function(reactElement: React.ReactNode) {
@@ -289,7 +354,17 @@ export const ReactUMG = {
             throw new Error("init with World first!");
         }
         let root = new UEWidgetRoot(UE.UMGManager.CreateReactWidget(world));
-        const container = reconciler.createContainer(root, false, false);
+        const container = reconciler.createContainer(
+            root, // containerInfo 
+            0, // tag
+            null, // hydrationCallbacks
+            false, // isStrictMode
+            null, // concurrentUpdatesByDefaultOverride
+            "UMG", // identifierPrefix
+            console.error, // onRecoverableError
+            null // transitionCallbacks
+        );
+
         reconciler.updateContainer(reactElement, container, null, null);
         return root;
     },
