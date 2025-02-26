@@ -7,70 +7,37 @@
  */
 
 #include "ReactWidget.h"
+
+#include "Blueprint/GameViewportSubsystem.h"
 #include "Blueprint/WidgetTree.h"
+#include "Components/VerticalBoxSlot.h"
 
-UReactWidget::UReactWidget(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+
+void UReactWidget::AddToViewport(int32 ZOrder)
 {
-    WidgetTree = CreateDefaultSubobject<UWidgetTree>(TEXT("WidgetTree"));
-    WidgetTree->SetFlags(RF_Transactional);
+ if (UGameViewportSubsystem* Subsystem = UGameViewportSubsystem::Get(GetWorld()))
+ {
+  FGameViewportWidgetSlot ViewportSlot;
+  if (bIsManagedByGameViewportSubsystem)
+  {
+   ViewportSlot = Subsystem->GetWidgetSlot(this);
+  }
+  ViewportSlot.ZOrder = ZOrder;
+  Subsystem->AddWidget(this, ViewportSlot);
+ }
 }
 
-UPanelSlot* UReactWidget::AddChild(UWidget* Content)
+void UReactWidget::RemoveFromViewport()
 {
-    if (Content == nullptr)
-    {
-        return nullptr;
-    }
-
-    if (RootSlot)
-    {
-        return nullptr;
-    }
-
-    Content->RemoveFromParent();
-
-    EObjectFlags NewObjectFlags = RF_Transactional;
-    if (HasAnyFlags(RF_Transient))
-    {
-        NewObjectFlags |= RF_Transient;
-    }
-
-    UPanelSlot* PanelSlot = NewObject<UPanelSlot>(this, UPanelSlot::StaticClass(), NAME_None, NewObjectFlags);
-    PanelSlot->Content = Content;
-
-    Content->Slot = PanelSlot;
-
-    RootSlot = PanelSlot;
-
-    WidgetTree->RootWidget = Content;
-
-    InvalidateLayoutAndVolatility();
-
-    return PanelSlot;
+ RemoveFromParent();
 }
 
-bool UReactWidget::RemoveChild(UWidget* Content)
+void UReactWidget::OnSlotAdded(UPanelSlot* InSlot)
 {
-    if (Content == nullptr || RootSlot == nullptr || Content != RootSlot->Content)
-    {
-        return false;
-    }
-    UPanelSlot* PanelSlot = RootSlot;
-    RootSlot = nullptr;
-
-    if (PanelSlot->Content)
-    {
-        PanelSlot->Content->Slot = nullptr;
-    }
-
-    const bool bReleaseChildren = true;
-    PanelSlot->ReleaseSlateResources(bReleaseChildren);
-    PanelSlot->Parent = nullptr;
-    PanelSlot->Content = nullptr;
-
-    WidgetTree->RootWidget = nullptr;
-
-    InvalidateLayoutAndVolatility();
-
-    return true;
+ UVerticalBoxSlot* slot = Cast<UVerticalBoxSlot>(InSlot);
+ slot->SetPadding(FMargin(0));
+ slot->SetHorizontalAlignment(HAlign_Fill);
+ slot->SetVerticalAlignment(VAlign_Center);
+ slot->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
+ Super::OnSlotAdded(InSlot);
 }

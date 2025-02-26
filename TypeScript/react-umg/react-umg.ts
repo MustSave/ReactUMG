@@ -228,6 +228,7 @@ const reconciler = Reconciler<
         container.removeFromViewport();
     },
     removeChildFromContainer: function (container: UEWidgetRoot, child: UEWidget) {
+        child.unbindAll();
         container.removeChild(child);
         console.log('removeChildFromContainer');
     },

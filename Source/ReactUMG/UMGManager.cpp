@@ -12,7 +12,7 @@
 
 UReactWidget* UUMGManager::CreateReactWidget(UWorld* World)
 {
-    return ::CreateWidget<UReactWidget>(World);
+    return NewObject<UReactWidget>(World, UReactWidget::StaticClass(), NAME_None, RF_Transactional);
 }
 
 UUserWidget* UUMGManager::CreateWidget(UWorld* World, UClass* Class)

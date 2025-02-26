@@ -10,25 +10,22 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/VerticalBox.h"
 #include "ReactWidget.generated.h"
 
 /**
  *
  */
 UCLASS()
-class REACTUMG_API UReactWidget : public UUserWidget
+class REACTUMG_API UReactWidget : public UVerticalBox
 {
     GENERATED_BODY()
 
-protected:
-    UPanelSlot* RootSlot;
-
 public:
-    explicit UReactWidget(const FObjectInitializer& ObjectInitializer);
-
-    UFUNCTION(BlueprintCallable, Category = "Scripting | Javascript")
-    UPanelSlot* AddChild(UWidget* Content);
-
-    UFUNCTION(BlueprintCallable, Category = "Scripting | Javascript")
-    bool RemoveChild(UWidget* Content);
+	UFUNCTION(BlueprintCallable, Category = "Scripting | Javascript")
+	void AddToViewport(int32 ZOrder = 0); 
+	UFUNCTION(BlueprintCallable, Category = "Scripting | Javascript")
+	void RemoveFromViewport();
+protected:
+	virtual void OnSlotAdded(UPanelSlot* InSlot) override;
 };
