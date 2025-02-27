@@ -34,10 +34,10 @@ void UReactWidget::RemoveFromViewport()
 
 void UReactWidget::OnSlotAdded(UPanelSlot* InSlot)
 {
- UVerticalBoxSlot* slot = Cast<UVerticalBoxSlot>(InSlot);
- slot->SetPadding(FMargin(0));
- slot->SetHorizontalAlignment(HAlign_Fill);
- slot->SetVerticalAlignment(VAlign_Center);
- slot->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
- Super::OnSlotAdded(InSlot);
+     UVerticalBoxSlot* slot = Cast<UVerticalBoxSlot>(InSlot);
+     slot->SetPadding(FMargin(0));
+     slot->SetHorizontalAlignment(HAlign_Fill);
+     slot->SetVerticalAlignment(VAlign_Fill);
+     slot->SetSize(FSlateChildSize(ESlateSizeRule::Fill));
+     Super::OnSlotAdded(InSlot);
 }
