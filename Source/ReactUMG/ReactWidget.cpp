@@ -15,21 +15,21 @@
 
 void UReactWidget::AddToViewport(int32 ZOrder)
 {
- if (UGameViewportSubsystem* Subsystem = UGameViewportSubsystem::Get(GetWorld()))
- {
-  FGameViewportWidgetSlot ViewportSlot;
-  if (bIsManagedByGameViewportSubsystem)
-  {
-   ViewportSlot = Subsystem->GetWidgetSlot(this);
-  }
-  ViewportSlot.ZOrder = ZOrder;
-  Subsystem->AddWidget(this, ViewportSlot);
- }
+    if (UGameViewportSubsystem* Subsystem = UGameViewportSubsystem::Get(GetWorld()))
+    {
+        FGameViewportWidgetSlot ViewportSlot;
+        if (bIsManagedByGameViewportSubsystem)
+        {
+            ViewportSlot = Subsystem->GetWidgetSlot(this);
+        }
+        ViewportSlot.ZOrder = ZOrder;
+        Subsystem->AddWidget(this, ViewportSlot);
+    }
 }
 
 void UReactWidget::RemoveFromViewport()
 {
- RemoveFromParent();
+    RemoveFromParent();
 }
 
 void UReactWidget::OnSlotAdded(UPanelSlot* InSlot)
