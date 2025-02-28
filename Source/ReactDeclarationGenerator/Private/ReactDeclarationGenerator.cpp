@@ -147,7 +147,7 @@ void FReactDeclarationGenerator::GenReactDeclaration()
     }
 
     var ReactUMG : TReactUMG;
-}    
+}
     )";
 
     FFileHelper::SaveStringToFile(ToString(), *(FPaths::ProjectDir() / TEXT("Typing/react-umg/index.d.ts")),
@@ -248,6 +248,10 @@ void FReactDeclarationGenerator::GenClass(UClass* Class)
             Gen(Type);
         }
         StringBuffer << "    " << TmpBuff.Buffer << ";\n";
+    }
+
+    if (Class == UWidget::StaticClass()) {
+        StringBuffer << "    " << "    " << "children?: React.ReactNode[] | React.ReactNode" << ";\n";
     }
 
     StringBuffer << "    "
