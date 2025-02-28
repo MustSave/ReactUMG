@@ -5,8 +5,11 @@
 * This file is subject to the terms and conditions defined in file 'LICENSE', which is part of this source code package.
 */
 
+using System;
+using System.Diagnostics;
 using UnrealBuildTool;
 using System.IO;
+using EpicGames.Core;
 
 public class ReactUMG : ModuleRules
 {
@@ -24,7 +27,20 @@ public class ReactUMG : ModuleRules
 		string coreTSPath = Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", "TypeScript"));
 		string destDirName = Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", "..", "..", "TypeScript", "react-umg"));
 		DirectoryCopy(coreTSPath, destDirName, true);
-	}
+
+        string projectDir = Path.Combine(PluginDirectory, "..", "..");
+        string packageJsonPath = Path.Combine(projectDir, "package.json");
+        string packageJsonPath2 = Path.Combine(projectDir, "Content", "JavaScript", "package.json");
+        if (!File.Exists(packageJsonPath))
+        {
+            File.WriteAllText(packageJsonPath, "{\n  \"dependencies\": {\n    \"@types/react-reconciler\": \"^0.28.9\",\n    \"@types/react-router\": \"^5.1.20\",\n    \"react-reconciler\": \"^0.28.0\",\n    \"react-router\": \"^5.3.4\"\n  }\n}\n");
+        }
+
+        if (!File.Exists(packageJsonPath2))
+        {
+            File.WriteAllText(packageJsonPath2, "{\n  \"dependencies\": {\n    \"react-reconciler\": \"^0.28.0\",\n    \"react-router\": \"^5.3.4\"\n  }\n}\n");
+        }
+    }
 
 	private static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
 	{
