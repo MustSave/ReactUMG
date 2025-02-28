@@ -14,35 +14,34 @@ public class ReactUMG : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] 
-		{ 
+		PublicDependencyModuleNames.AddRange(new string[]
+		{
 			"Core", "CoreUObject", "Engine", "InputCore", "Serialization", "UMG"
         });
 
 		bEnableExceptions = true;
 
-		//string coreJSPath = Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", "Content", "Scripts"));
-		//string destDirName = Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", "..", "..", "Content", "Scripts"));
-		//DirectoryCopy(coreJSPath, destDirName, true);
-
+		string coreTSPath = Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", "TypeScript"));
+		string destDirName = Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", "..", "..", "TypeScript", "react-umg"));
+		DirectoryCopy(coreTSPath, destDirName, true);
 	}
 
 	private static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
 	{
 		DirectoryInfo dir = new DirectoryInfo(sourceDirName);
-		
+
 		if (!dir.Exists)
 		{
 			throw new DirectoryNotFoundException(
 			"Source directory does not exist or could not be found: "
 			+ sourceDirName);
 		}
-		
+
 		if (!Directory.Exists(destDirName))
 		{
 			Directory.CreateDirectory(destDirName);
 		}
-		
+
 		// Get the files in the directory and copy them to the new location.
 		FileInfo[] files = dir.GetFiles();
 		foreach (FileInfo file in files)
@@ -50,7 +49,7 @@ public class ReactUMG : ModuleRules
 			string temppath = Path.Combine(destDirName, file.Name);
 			file.CopyTo(temppath, true);
 		}
-		
+
 		if (copySubDirs)
 		{
 			DirectoryInfo[] dirs = dir.GetDirectories();
