@@ -9,18 +9,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
 #include "ReactWidget.h"
-#include "Components/PanelSlot.h"
 #include "Blueprint/UserWidget.h"
-#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "GameFramework/PlayerController.h"
 #include "UMGManager.generated.h"
 
-/**
- *
- */
+
+DECLARE_DYNAMIC_DELEGATE_OneParam(FOnReactRouteTo, const FString&, path);
+
 UCLASS()
 class REACTUMG_API UUMGManager : public UBlueprintFunctionLibrary
 {
@@ -37,4 +34,13 @@ public:
 
     UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Widget")
     static void SynchronizeSlotProperties(UPanelSlot* Slot);
+
+    UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Widget")
+    static void RouteTo(const FString& path);
+
+    UFUNCTION(BlueprintCallable, BlueprintCosmetic, Category = "Widget")
+    static void SetReactRouteTo(const FOnReactRouteTo& path);
+
+private:
+    static FOnReactRouteTo OnReactRouteTo;
 };

@@ -136,13 +136,45 @@ void FReactDeclarationGenerator::GenReactDeclaration()
     }
 
     Output << R"(
+    class UEWidget {
+        type: string;
+        callbackRemovers: { [key: string]: () => void };
+        nativePtr: UE.Widget;
+        slot: any;
+        nativeSlotPtr: UE.PanelSlot;
+
+        constructor(type: string, props: any);
+
+        init(type: string, props: any): void;
+        bind(name: string, callback: Function): void;
+        update(oldProps: any, newProps: any): void;
+        unbind(name: string): void;
+        unbindAll(): void;
+        appendChild(child: UEWidget): void;
+        removeChild(child: UEWidget): void;
+        set nativeSlot(value: UE.PanelSlot);
+    }
+
+    class UEWidgetRoot {
+        nativePtr: UE.ReactWidget;
+        Added: boolean;
+
+        constructor(nativePtr: UE.ReactWidget);
+
+        appendChild(child: UEWidget): void;
+        removeChild(child: UEWidget): void;
+        addToViewport(z: number): void;
+        removeFromViewport(): void;
+        getWidget(): UE.ReactWidget;
+    }
+
     interface Root {
         removeFromViewport() : void;
         getWidget(): any;
     }
 
     interface TReactUMG {
-        render(element: React.ReactElement) : Root;
+        render(element: React.ReactElement, root?: UEWidgetRoot) : Root;
         init(world: any) : void;
     }
 

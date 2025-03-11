@@ -158,7 +158,7 @@ class UEWidget {
     }
 }
 
-class UEWidgetRoot {
+export class UEWidgetRoot {
     nativePtr: UE.ReactWidget;
     Added: boolean;
 
@@ -350,11 +350,11 @@ const reconciler = Reconciler<
 });
 
 export const ReactUMG = {
-    render: function(reactElement: React.ReactNode) {
+    render: function(reactElement: React.ReactNode, root?: UEWidgetRoot) {
         if (world == undefined) {
             throw new Error("init with World first!");
         }
-        let root = new UEWidgetRoot(UE.UMGManager.CreateReactWidget(world));
+        root = root || new UEWidgetRoot(UE.UMGManager.CreateReactWidget(world));
         const container = reconciler.createContainer(
             root, // containerInfo 
             0, // tag
@@ -373,4 +373,3 @@ export const ReactUMG = {
         world = inWorld;
     }
 }
-

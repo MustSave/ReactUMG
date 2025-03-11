@@ -15,6 +15,13 @@
 
 void UReactWidget::AddToViewport(int32 ZOrder)
 {
+#if WITH_EDITOR
+    if (IsDesignTime())
+    {
+        return;
+    }
+#endif
+
     if (UGameViewportSubsystem* Subsystem = UGameViewportSubsystem::Get(GetWorld()))
     {
         FGameViewportWidgetSlot ViewportSlot;
@@ -29,6 +36,12 @@ void UReactWidget::AddToViewport(int32 ZOrder)
 
 void UReactWidget::RemoveFromViewport()
 {
+#if WITH_EDITOR
+    if (IsDesignTime())
+    {
+        return;
+    }
+#endif
     RemoveFromParent();
 }
 

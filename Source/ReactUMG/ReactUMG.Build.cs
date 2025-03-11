@@ -25,7 +25,7 @@ public class ReactUMG : ModuleRules
 		bEnableExceptions = true;
 
 		string coreTSPath = Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", "TypeScript"));
-		string destDirName = Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", "..", "..", "TypeScript", "react-umg"));
+		string destDirName = Path.GetFullPath(Path.Combine(ModuleDirectory, "..", "..", "..", "..", "TypeScript"));
 		DirectoryCopy(coreTSPath, destDirName, true);
 
         string projectDir = Path.Combine(PluginDirectory, "..", "..");

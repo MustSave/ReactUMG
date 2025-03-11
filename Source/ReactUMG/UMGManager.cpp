@@ -29,3 +29,14 @@ void UUMGManager::SynchronizeSlotProperties(UPanelSlot* Slot)
 {
     Slot->SynchronizeProperties();
 }
+
+FOnReactRouteTo UUMGManager::OnReactRouteTo;
+void UUMGManager::RouteTo(const FString& path)
+{
+    OnReactRouteTo.ExecuteIfBound(path);
+}
+
+void UUMGManager::SetReactRouteTo(const FOnReactRouteTo& path)
+{
+    OnReactRouteTo = path;
+}
