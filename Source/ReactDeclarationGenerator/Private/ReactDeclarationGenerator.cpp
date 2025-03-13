@@ -174,8 +174,8 @@ void FReactDeclarationGenerator::GenReactDeclaration()
     }
 
     interface TReactUMG {
-        render(element: React.ReactElement, root?: UEWidgetRoot) : Root;
-        init(world: any) : void;
+        render(worldContext: UE.Object, element: React.ReactElement, root?: UEWidgetRoot) : Root;
+        getWorld() : UE.World;
     }
 
     var ReactUMG : TReactUMG;

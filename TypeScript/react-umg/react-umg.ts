@@ -235,6 +235,10 @@ const reconciler = Reconciler<
     removeChild: function(parent: UEWidget, child: UEWidget) {
         parent.removeChild(child);
     },
+    insertBefore(parentInstance: UEWidget, child: UEWidget, beforeChild: UEWidget) {
+        console.warn("insertBefore called. This might result wierd result");
+        parentInstance.appendChild(child);
+    },
     finalizeInitialChildren: function (instance: UEWidget, type: string, props: unknown, rootContainer: UEWidgetRoot, hostContext: {}): boolean {
         return false
     },
@@ -350,11 +354,19 @@ const reconciler = Reconciler<
 });
 
 export const ReactUMG = {
-    render: function(reactElement: React.ReactNode, root?: UEWidgetRoot) {
-        if (world == undefined) {
+    render: function (worldContext: UE.Object, element: React.ReactElement, root?: UEWidgetRoot) {
+        world = worldContext.GetWorld();
+        if (!world) {
             throw new Error("init with World first!");
         }
-        root = root || new UEWidgetRoot(UE.UMGManager.CreateReactWidget(world));
+        if (!root) {
+            const fromArgv = puerts.argv.getByName("ReactWidget")
+            if (fromArgv && fromArgv.IsA(UE.ReactWidget.StaticClass())) {
+                root = new UEWidgetRoot(fromArgv as UE.ReactWidget);
+            } else {
+                root = new UEWidgetRoot(UE.UMGManager.CreateReactWidget(world));
+            }
+        }
         const container = reconciler.createContainer(
             root, // containerInfo 
             0, // tag
@@ -366,10 +378,10 @@ export const ReactUMG = {
             null // transitionCallbacks
         );
 
-        reconciler.updateContainer(reactElement, container, null, null);
+        reconciler.updateContainer(element, container, null, null);
         return root;
     },
-    init: function(inWorld: UE.World) {
-        world = inWorld;
+    getWorld: function() {
+        return world;
     }
 }
